@@ -39,8 +39,15 @@ namespace ExtendedCollections
         /// </summary>
         public event EventHandler Dequeued;
 
-        public LimitedQueue()
+        public LimitedQueue(int limit)
         {
+            if (limit <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(limit), "The limit should be a positive integer.");
+            }
+
+            Limit = limit;
+
             Enqueued += HandleEnqueued;
         }
 
