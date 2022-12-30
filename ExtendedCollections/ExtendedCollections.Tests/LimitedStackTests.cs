@@ -1,127 +1,123 @@
-﻿using System;
-using Xunit;
+﻿namespace ExtendedCollections.Tests;
 
-namespace ExtendedCollections.Tests
+public class LimitedStackTests
 {
-    public class LimitedStackTests
+    [Fact]
+    public void CannotExceed5Items()
     {
-        [Fact]
-        public void CannotExceed5Items()
+        // Arrange
+        int stackLimit = 5;
+        var stack = new LimitedStack<int>(stackLimit);
+
+        int pushedEvents = 0;
+        int poppedEvents = 0;
+
+        stack.Pushed += (sender, e) =>
         {
-            // Arrange
-            int stackLimit = 5;
-            var stack = new LimitedStack<int>(stackLimit);
-
-            int pushedEvents = 0;
-            int poppedEvents = 0;
-
-            stack.Pushed += (sender, e) =>
-            {
-                pushedEvents++;
-                Assert.True(stack.Count <= 5);
-            };
-            stack.Popped += (sender, e) =>
-            {
-                poppedEvents++;
-                Assert.True(stack.Count <= 5);
-            };
-
-            // Act
-            stack.Push(1);
-            stack.Push(2);
-            stack.Push(3);
-            stack.Push(4);
-            stack.Push(5);
-            stack.Push(6);
-
-            // Assert
-            Assert.Equal(6, pushedEvents);
-            Assert.Equal(1, poppedEvents);
-
-            var values = stack.ToList();
-
-            Assert.Equal(5, values[0]);
-            Assert.Equal(1, values[4]);
-        }
-
-        [Fact]
-        public void ThrowExceptionIfStackLimitIs0()
+            pushedEvents++;
+            Assert.True(stack.Count <= 5);
+        };
+        stack.Popped += (sender, e) =>
         {
-            // Arrange
-            int stackLimit = 0;
+            poppedEvents++;
+            Assert.True(stack.Count <= 5);
+        };
 
-            // Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => new LimitedStack<int>(stackLimit));
-        }
+        // Act
+        stack.Push(1);
+        stack.Push(2);
+        stack.Push(3);
+        stack.Push(4);
+        stack.Push(5);
+        stack.Push(6);
 
-        [Fact]
-        public void ThrowExceptionIfStackLimitIsNegative()
+        // Assert
+        Assert.Equal(6, pushedEvents);
+        Assert.Equal(1, poppedEvents);
+
+        var values = stack.ToList();
+
+        Assert.Equal(5, values[0]);
+        Assert.Equal(1, values[4]);
+    }
+
+    [Fact]
+    public void ThrowExceptionIfStackLimitIs0()
+    {
+        // Arrange
+        int stackLimit = 0;
+
+        // Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => new LimitedStack<int>(stackLimit));
+    }
+
+    [Fact]
+    public void ThrowExceptionIfStackLimitIsNegative()
+    {
+        // Arrange
+        int stackLimit = -10;
+
+        // Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => new LimitedStack<int>(stackLimit));
+    }
+
+    [Fact]
+    public void CanPopSuccessfully()
+    {
+        // Arrange
+        int stackLimit = 5;
+        var stack = new LimitedStack<int>(stackLimit);
+
+        int pushedEvents = 0;
+        int poppedEvents = 0;
+
+        stack.Pushed += (sender, e) =>
         {
-            // Arrange
-            int stackLimit = -10;
-
-            // Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => new LimitedStack<int>(stackLimit));
-        }
-
-        [Fact]
-        public void CanPopSuccessfully()
+            pushedEvents++;
+        };
+        stack.Popped += (sender, e) =>
         {
-            // Arrange
-            int stackLimit = 5;
-            var stack = new LimitedStack<int>(stackLimit);
+            poppedEvents++;
+        };
 
-            int pushedEvents = 0;
-            int poppedEvents = 0;
+        // Act
+        stack.Push(1);
+        var result = stack.TryPop();
 
-            stack.Pushed += (sender, e) =>
-            {
-                pushedEvents++;
-            };
-            stack.Popped += (sender, e) =>
-            {
-                poppedEvents++;
-            };
+        // Assert
+        Assert.Equal(1, pushedEvents);
+        Assert.Equal(1, poppedEvents);
 
-            // Act
-            stack.Push(1);
-            var result = stack.TryPop();
+        Assert.True(result.Success);
+        Assert.Equal(1, result.Value);
+    }
 
-            // Assert
-            Assert.Equal(1, pushedEvents);
-            Assert.Equal(1, poppedEvents);
+    [Fact]
+    public void CannotPop()
+    {
+        // Arrange
+        int stackLimit = 5;
+        var stack = new LimitedStack<int>(stackLimit);
 
-            Assert.True(result.Success);
-            Assert.Equal(1, result.Value);
-        }
+        int pushedEvents = 0;
+        int poppedEvents = 0;
 
-        [Fact]
-        public void CannotPop()
+        stack.Pushed += (sender, e) =>
         {
-            // Arrange
-            int stackLimit = 5;
-            var stack = new LimitedStack<int>(stackLimit);
+            pushedEvents++;
+        };
+        stack.Popped += (sender, e) =>
+        {
+            poppedEvents++;
+        };
 
-            int pushedEvents = 0;
-            int poppedEvents = 0;
+        // Act
+        var result = stack.TryPop();
 
-            stack.Pushed += (sender, e) =>
-            {
-                pushedEvents++;
-            };
-            stack.Popped += (sender, e) =>
-            {
-                poppedEvents++;
-            };
+        // Assert
+        Assert.Equal(0, pushedEvents);
+        Assert.Equal(0, poppedEvents);
 
-            // Act
-            var result = stack.TryPop();
-
-            // Assert
-            Assert.Equal(0, pushedEvents);
-            Assert.Equal(0, poppedEvents);
-
-            Assert.False(result.Success);
-        }
+        Assert.False(result.Success);
     }
 }

@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace ExtendedCollections;
 
-namespace ExtendedCollections
+public class EnqueuedEventArgs<T> : EventArgs
 {
-    public class EnqueuedEventArgs<T> : EventArgs
-    {
-        public T Item { get; set; }
-    }
+    public T Item { get; set; }
+}
 
-    public class DequeuedEventArgs<T> : EventArgs
-    {
-        public T Item { get; set; }
-    }
+public class DequeuedEventArgs<T> : EventArgs
+{
+    public T Item { get; set; }
 }
