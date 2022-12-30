@@ -83,14 +83,14 @@ namespace ExtendedCollections.Tests
 
             // Act
             stack.Push(1);
-            var (success, result) = stack.TryPop();
+            var result = stack.TryPop();
 
             // Assert
             Assert.Equal(1, pushedEvents);
             Assert.Equal(1, poppedEvents);
 
-            Assert.True(success);
-            Assert.Equal(1, result);
+            Assert.True(result.Success);
+            Assert.Equal(1, result.Value);
         }
 
         [Fact]
@@ -113,13 +113,13 @@ namespace ExtendedCollections.Tests
             };
 
             // Act
-            var (success, result) = stack.TryPop();
+            var result = stack.TryPop();
 
             // Assert
             Assert.Equal(0, pushedEvents);
             Assert.Equal(0, poppedEvents);
 
-            Assert.False(success);
+            Assert.False(result.Success);
         }
     }
 }

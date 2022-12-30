@@ -82,16 +82,15 @@ namespace ExtendedCollections
         /// Dequeue an item (if possible).
         /// </summary>
         /// <returns>Returns whether the dequeue has been done, with the element dequeued.</returns>
-        public Tuple<bool, T> TryDequeue()
+        public Result<T> TryDequeue()
         {
             bool success = _queue.TryDequeue(out var item);
-
             if (success)
             {
                 Dequeued?.Invoke(this, EventArgs.Empty);
             }
 
-            return Tuple.Create(success, item);
+            return new Result<T> { Success = success, Value = item };
         }
     }
 }

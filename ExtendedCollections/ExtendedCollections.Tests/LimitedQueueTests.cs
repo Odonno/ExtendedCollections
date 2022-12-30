@@ -83,14 +83,14 @@ namespace ExtendedCollections.Tests
 
             // Act
             queue.Enqueue(1);
-            var (success, result) = queue.TryDequeue();
+            var result = queue.TryDequeue();
 
             // Assert
             Assert.Equal(1, enqueuedEvents);
             Assert.Equal(1, dequeuedEvents);
 
-            Assert.True(success);
-            Assert.Equal(1, result);
+            Assert.True(result.Success);
+            Assert.Equal(1, result.Value);
         }
 
         [Fact]
@@ -113,13 +113,13 @@ namespace ExtendedCollections.Tests
             };
 
             // Act
-            var (success, result) = queue.TryDequeue();
+            var result = queue.TryDequeue();
 
             // Assert
             Assert.Equal(0, enqueuedEvents);
             Assert.Equal(0, dequeuedEvents);
 
-            Assert.False(success);
+            Assert.False(result.Success);
         }
     }
 }

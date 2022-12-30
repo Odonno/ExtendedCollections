@@ -82,16 +82,15 @@ namespace ExtendedCollections
         /// Pop an item (if possible).
         /// </summary>
         /// <returns></returns>
-        public Tuple<bool, T> TryPop()
+        public Result<T> TryPop()
         {
             bool success = _stack.TryPop(out var item);
-
             if (success)
             {
                 Popped?.Invoke(this, EventArgs.Empty);
             }
 
-            return Tuple.Create(success, item);
+            return new Result<T> { Success = success, Value = item };
         }
     }
 }

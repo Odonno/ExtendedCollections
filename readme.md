@@ -15,7 +15,11 @@ var queue = new LimitedQueue<Entity>(5); // Max of 5 items in the queue
 
 queue.Enqueue(entity); // Enqueue an item
 
-var (success, item) = queue.TryDequeue(); // Try to dequeue an item
+var result = queue.TryDequeue(); // Try to dequeue an item
+if (result.Success)
+{
+    var item = result.Value; // Access dequeued item
+}
 
 queue.Enqueued += (sender, e) => {}; // Listen to enqueued items
 queue.Dequeued += (sender, e) => {}; // Listen to dequeued items
@@ -34,7 +38,11 @@ var stack = new LimitedStack<Entity>(5); // Max of 5 items in the stack
 
 stack.Push(entity); // Push an item
 
-var (success, item) = stack.TryPop(); // Try to pop an item
+var result = stack.TryPop(); // Try to pop an item
+if (result.Success)
+{
+    var item = result.Value; // Access popped item
+}
 
 stack.Pushed += (sender, e) => {}; // Listen to pushed items
 stack.Popped += (sender, e) => {}; // Listen to popped items
@@ -51,13 +59,13 @@ A `List` to store unique items based on a key. A mix between a `List<TEntity>` a
 ```cs
 var list = new EntityList<int, Entity>(e => e.Id);
 
-list.Upsert(entity); // Upsert a new item
-// Add if the key does not exist in the list
-// Update otherwise
+// Upsert a new item
+// Add if the key does not exist in the list, update otherwise
+list.Upsert(entity);
 
 var entity = list.Find(1); // Find item by key
 
-list.Remove(1); // Remove using the key
+bool success = list.Remove(1); // Remove using the key
 ```
 
 </details>
