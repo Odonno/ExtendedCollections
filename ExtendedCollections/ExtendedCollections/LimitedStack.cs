@@ -5,6 +5,10 @@ using System.Linq;
 
 namespace ExtendedCollections
 {
+    /// <summary>
+    /// A standard <see cref="Stack{T}"/> with a maximum number of items inside.
+    /// </summary>
+    /// <typeparam name="T">The type of item stored.</typeparam>
     public class LimitedStack<T>
     {
         private readonly ConcurrentStack<T> _stack = new ConcurrentStack<T>();
@@ -39,6 +43,11 @@ namespace ExtendedCollections
         /// </summary>
         public event EventHandler Popped;
 
+        /// <summary>
+        /// Creates a new instance of a <see cref="LimitedStack{T}"/>.
+        /// </summary>
+        /// <param name="limit">The maximum item inside the stack at any given time.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when limit is less than or equal to 0.</exception>
         public LimitedStack(int limit)
         {
             if (limit <= 0)

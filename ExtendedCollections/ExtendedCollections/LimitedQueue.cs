@@ -5,6 +5,10 @@ using System.Linq;
 
 namespace ExtendedCollections
 {
+    /// <summary>
+    /// A standard <see cref="Queue{T}"/> with a maximum number of items inside.
+    /// </summary>
+    /// <typeparam name="T">The type of item stored.</typeparam>
     public class LimitedQueue<T>
     {
         private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
@@ -39,6 +43,11 @@ namespace ExtendedCollections
         /// </summary>
         public event EventHandler Dequeued;
 
+        /// <summary>
+        /// Creates a new instance of a <see cref="LimitedQueue{T}"/>.
+        /// </summary>
+        /// <param name="limit">The maximum item inside the queue at any given time.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when limit is less than or equal to 0.</exception>
         public LimitedQueue(int limit)
         {
             if (limit <= 0)
