@@ -5,6 +5,16 @@ using System.Linq;
 
 namespace ExtendedCollections
 {
+    public class PushedEventArgs<T> : EventArgs
+    {
+        public T Item { get; set; }
+    }
+
+    public class PoppedEventArgs<T> : EventArgs
+    {
+        public T Item { get; set; }
+    }
+
     /// <summary>
     /// A standard <see cref="Stack{T}"/> with a maximum number of items inside.
     /// </summary>
@@ -31,12 +41,12 @@ namespace ExtendedCollections
         /// <summary>
         /// Event triggered when an element is pushed.
         /// </summary>
-        public event EventHandler Pushed;
+        public event EventHandler<PushedEventArgs<T>> Pushed;
 
         /// <summary>
         /// Event triggered when an element is popped.
         /// </summary>
-        public event EventHandler Popped;
+        public event EventHandler<PoppedEventArgs<T>> Popped;
 
         /// <summary>
         /// Creates a new instance of a <see cref="LimitedStack{T}"/>.
@@ -70,7 +80,7 @@ namespace ExtendedCollections
         public void Push(T item)
         {
             _stack.Push(item);
-            Pushed?.Invoke(this, EventArgs.Empty);
+            Pushed?.Invoke(this, new PushedEventArgs<T> { Item = item });
         }
 
         /// <summary>
@@ -82,7 +92,7 @@ namespace ExtendedCollections
             bool success = _stack.TryPop(out var item);
             if (success)
             {
-                Popped?.Invoke(this, EventArgs.Empty);
+                Popped?.Invoke(this, new PoppedEventArgs<T> { Item = item });
             }
 
             return new Result<T> { Success = success, Value = item };

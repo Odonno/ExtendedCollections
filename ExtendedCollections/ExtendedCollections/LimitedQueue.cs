@@ -5,6 +5,16 @@ using System.Linq;
 
 namespace ExtendedCollections
 {
+    public class EnqueuedEventArgs<T> : EventArgs
+    {
+        public T Item { get; set; }
+    }
+
+    public class DequeuedEventArgs<T> : EventArgs
+    {
+        public T Item { get; set; }
+    }
+
     /// <summary>
     /// A standard <see cref="Queue{T}"/> with a maximum number of items inside.
     /// </summary>
@@ -31,12 +41,12 @@ namespace ExtendedCollections
         /// <summary>
         /// Event triggered when an element is enqueued.
         /// </summary>
-        public event EventHandler Enqueued;
+        public event EventHandler<EnqueuedEventArgs<T>> Enqueued;
 
         /// <summary>
         /// Event triggered when an element is dequeued.
         /// </summary>
-        public event EventHandler Dequeued;
+        public event EventHandler<DequeuedEventArgs<T>> Dequeued;
 
         /// <summary>
         /// Creates a new instance of a <see cref="LimitedQueue{T}"/>.
@@ -70,7 +80,7 @@ namespace ExtendedCollections
         public void Enqueue(T item)
         {
             _queue.Enqueue(item);
-            Enqueued?.Invoke(this, EventArgs.Empty);
+            Enqueued?.Invoke(this, new EnqueuedEventArgs<T> { Item = item });
         }
 
         /// <summary>
@@ -82,7 +92,7 @@ namespace ExtendedCollections
             bool success = _queue.TryDequeue(out var item);
             if (success)
             {
-                Dequeued?.Invoke(this, EventArgs.Empty);
+                Dequeued?.Invoke(this, new DequeuedEventArgs<T> { Item = item });
             }
 
             return new Result<T> { Success = success, Value = item };
