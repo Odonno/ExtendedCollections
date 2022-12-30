@@ -1,9 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>ExtendedCollections</RootNamespace>
+    <PackageId>ExtendedCollections</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>David Bottiau</Authors>
+    <Title>Extended Collections</Title>
+    <Description>A set of types that extends C# collection types</Description>
+    <PackageProjectUrl>https://github.com/Odonno/ExtendedCollections</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Odonno/ExtendedCollections</RepositoryUrl>
+    <Company />
+    <PackageTags>Extended Collections EntityList List Entity LimitedQueue LimitedStack</PackageTags>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 
-	  <LangVersion>latest</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 
 </Project>
