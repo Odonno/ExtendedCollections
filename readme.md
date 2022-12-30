@@ -66,6 +66,10 @@ list.Upsert(entity);
 var entity = list.Find(1); // Find item by key
 
 bool success = list.Remove(1); // Remove using the key
+
+list.Added += (sender, e) => {}; // Listen to added entities
+list.Updated += (sender, e) => {}; // Listen to updated entities
+list.Removed += (sender, e) => {}; // Listen to removed entities
 ```
 
 </details>

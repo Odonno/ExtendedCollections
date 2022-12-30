@@ -19,6 +19,18 @@ namespace ExtendedCollections.Tests
 
             int id = 1;
 
+            int addedEvents = 0;
+            int updatedEvents = 0;
+
+            entityList.Added += (sender, e) =>
+            {
+                addedEvents++;
+            };
+            entityList.Updated += (sender, e) =>
+            {
+                updatedEvents++;
+            };
+
             // Act
             var entity1 = new Entity
             {
@@ -34,6 +46,9 @@ namespace ExtendedCollections.Tests
             entityList.Upsert(newEntity1);
 
             // Assert
+            Assert.Equal(1, addedEvents);
+            Assert.Equal(1, updatedEvents);
+
             Assert.Single(entityList);
             Assert.Equal(1, entityList[id].Id);
             Assert.Equal("Updated", entityList[id].Property);
@@ -74,11 +89,47 @@ namespace ExtendedCollections.Tests
             };
             entityList.Upsert(entity1);
 
+            int removedEvents = 0;
+
+            entityList.Removed += (sender, e) =>
+            {
+                removedEvents++;
+            };
+
             // Act
             entityList.Remove(1);
 
             // Assert
+            Assert.Equal(1, removedEvents);
             Assert.Empty(entityList);
+        }
+
+        [Fact]
+        public void RemoveNothing()
+        {
+            // Arrange
+            var entityList = new EntityList<int, Entity>(e => e.Id);
+
+            var entity1 = new Entity
+            {
+                Id = 1,
+                Property = "Created"
+            };
+            entityList.Upsert(entity1);
+
+            int removedEvents = 0;
+
+            entityList.Removed += (sender, e) =>
+            {
+                removedEvents++;
+            };
+
+            // Act
+            entityList.Remove(4);
+
+            // Assert
+            Assert.Equal(0, removedEvents);
+            Assert.NotEmpty(entityList);
         }
 
         [Fact]
@@ -178,10 +229,22 @@ namespace ExtendedCollections.Tests
         }
 
         [Fact]
-        public void SetEntityUsingArrayIndexer()
+        public void InsertEntityUsingArrayIndexer()
         {
             // Arrange
             var entityList = new EntityList<int, Entity>(e => e.Id);
+
+            int addedEvents = 0;
+            int updatedEvents = 0;
+
+            entityList.Added += (sender, e) =>
+            {
+                addedEvents++;
+            };
+            entityList.Updated += (sender, e) =>
+            {
+                updatedEvents++;
+            };
 
             // Act
             var entity1 = new Entity
@@ -192,6 +255,44 @@ namespace ExtendedCollections.Tests
             entityList[1] = entity1;
 
             // Assert
+            Assert.Equal(1, addedEvents);
+            Assert.Equal(0, updatedEvents);
+
+            Assert.Single(entityList);
+            Assert.Equal(entity1, entityList[1]);
+        }
+
+        [Fact]
+        public void UpdateEntityUsingArrayIndexer()
+        {
+            // Arrange
+            var entityList = new EntityList<int, Entity>(e => e.Id);
+
+            int addedEvents = 0;
+            int updatedEvents = 0;
+
+            entityList.Added += (sender, e) =>
+            {
+                addedEvents++;
+            };
+            entityList.Updated += (sender, e) =>
+            {
+                updatedEvents++;
+            };
+
+            // Act
+            var entity1 = new Entity
+            {
+                Id = 1,
+                Property = "One"
+            };
+            entityList[1] = entity1;
+            entityList[1] = entity1;
+
+            // Assert
+            Assert.Equal(1, addedEvents);
+            Assert.Equal(1, updatedEvents);
+
             Assert.Single(entityList);
             Assert.Equal(entity1, entityList[1]);
         }
@@ -216,10 +317,18 @@ namespace ExtendedCollections.Tests
             };
             entityList.Upsert(entity2);
 
+            int removedEvents = 0;
+
+            entityList.Removed += (sender, e) =>
+            {
+                removedEvents++;
+            };
+
             // Act
             entityList.Clear();
 
             // Assert
+            Assert.Equal(2, removedEvents);
             Assert.Empty(entityList.Values);
         }
     }

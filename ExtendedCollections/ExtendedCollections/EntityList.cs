@@ -23,8 +23,19 @@ namespace ExtendedCollections
                 return _entities[key];
             }
             set 
-            { 
+            {
+                bool isUpdated = Exists(key);
+                
                 _entities[key] = value;
+
+                if (isUpdated)
+                {
+                    Updated?.Invoke(this, new EntityUpdatedEventArgs<TEntity> { Entity = value });
+                }
+                else
+                {
+                    Added?.Invoke(this, new EntityAddedEventArgs<TEntity> { Entity = value });
+                }
             }
         }
 
@@ -42,6 +53,21 @@ namespace ExtendedCollections
         /// Gets the number of entities contained in the list.
         /// </summary>
         public int Count => _entities.Count;
+
+        /// <summary>
+        /// Event triggered when an entity is added.
+        /// </summary>
+        public event EventHandler<EntityAddedEventArgs<TEntity>> Added;
+
+        /// <summary>
+        /// Event triggered when an entity is updated.
+        /// </summary>
+        public event EventHandler<EntityUpdatedEventArgs<TEntity>> Updated;
+
+        /// <summary>
+        /// Event triggered when an entity is removed.
+        /// </summary>
+        public event EventHandler<EntityRemovedEventArgs<TEntity>> Removed;
 
         /// <summary>
         /// Creates a new instance of a <see cref="EntityList{TKey, TEntity}"/>.
@@ -75,7 +101,20 @@ namespace ExtendedCollections
         public void Upsert(TEntity entity)
         {
             var key = _selectKey(entity);
-            _entities.AddOrUpdate(key, entity, (_, __) => entity);
+
+            _entities.AddOrUpdate(
+                key, 
+                (_) =>
+                {
+                    Added?.Invoke(this, new EntityAddedEventArgs<TEntity> { Entity = entity });
+                    return entity;
+                }, 
+                (_, __) =>
+                {
+                    Updated?.Invoke(this, new EntityUpdatedEventArgs<TEntity> { Entity = entity });
+                    return entity;
+                }
+            );
         }
         /// <summary>
         /// Insert a collection of entity in the list, or update any entity if it already exists.
@@ -117,7 +156,13 @@ namespace ExtendedCollections
         /// <returns>true if the entity was removed.</returns>
         public bool Remove(TKey key)
         {
-            return _entities.TryRemove(key, out _);
+            bool isRemoved = _entities.TryRemove(key, out var entity);
+            if (isRemoved)
+            {
+                Removed?.Invoke(this, new EntityRemovedEventArgs<TEntity> { Entity = entity });
+            }
+
+            return isRemoved;
         }
 
         /// <summary>
@@ -125,6 +170,12 @@ namespace ExtendedCollections
         /// </summary>
         public void Clear()
         {
+            foreach (var kv in _entities)
+            {
+                var entity = kv.Value;
+                Removed?.Invoke(this, new EntityRemovedEventArgs<TEntity> { Entity = entity });
+            }
+
             _entities.Clear();
         }
     }

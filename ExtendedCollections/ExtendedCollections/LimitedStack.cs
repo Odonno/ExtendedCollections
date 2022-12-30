@@ -5,16 +5,6 @@ using System.Linq;
 
 namespace ExtendedCollections
 {
-    public class PushedEventArgs<T> : EventArgs
-    {
-        public T Item { get; set; }
-    }
-
-    public class PoppedEventArgs<T> : EventArgs
-    {
-        public T Item { get; set; }
-    }
-
     /// <summary>
     /// A standard <see cref="Stack{T}"/> with a maximum number of items inside.
     /// </summary>

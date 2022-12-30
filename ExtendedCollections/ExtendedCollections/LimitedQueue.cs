@@ -5,16 +5,6 @@ using System.Linq;
 
 namespace ExtendedCollections
 {
-    public class EnqueuedEventArgs<T> : EventArgs
-    {
-        public T Item { get; set; }
-    }
-
-    public class DequeuedEventArgs<T> : EventArgs
-    {
-        public T Item { get; set; }
-    }
-
     /// <summary>
     /// A standard <see cref="Queue{T}"/> with a maximum number of items inside.
     /// </summary>
