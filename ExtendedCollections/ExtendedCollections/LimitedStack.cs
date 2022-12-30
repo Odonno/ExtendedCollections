@@ -29,11 +29,6 @@ namespace ExtendedCollections
         public bool IsEmpty => _stack.IsEmpty;
 
         /// <summary>
-        /// Values inside the stack.
-        /// </summary>
-        public List<T> Values => _stack.ToList();
-
-        /// <summary>
         /// Event triggered when an element is pushed.
         /// </summary>
         public event EventHandler Pushed;
@@ -91,6 +86,15 @@ namespace ExtendedCollections
             }
 
             return new Result<T> { Success = success, Value = item };
+        }
+
+        /// <summary>
+        /// Creates a <see cref="List{T}"/> from the inner <see cref="Stack{T}"/>.
+        /// </summary>
+        /// <returns>A <see cref="List{T}"/> from the inner <see cref="Stack{T}"/>.</returns>
+        public List<T> ToList()
+        {
+            return _stack.ToList();
         }
     }
 }

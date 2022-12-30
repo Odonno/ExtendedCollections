@@ -38,8 +38,10 @@ namespace ExtendedCollections.Tests
             Assert.Equal(6, enqueuedEvents);
             Assert.Equal(1, dequeuedEvents);
 
-            Assert.Equal(2, queue.Values[0]);
-            Assert.Equal(6, queue.Values[4]);
+            var values = queue.ToList();
+
+            Assert.Equal(2, values[0]);
+            Assert.Equal(6, values[4]);
         }
 
         [Fact]

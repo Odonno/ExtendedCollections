@@ -38,8 +38,10 @@ namespace ExtendedCollections.Tests
             Assert.Equal(6, pushedEvents);
             Assert.Equal(1, poppedEvents);
 
-            Assert.Equal(5, stack.Values[0]);
-            Assert.Equal(1, stack.Values[4]);
+            var values = stack.ToList();
+
+            Assert.Equal(5, values[0]);
+            Assert.Equal(1, values[4]);
         }
 
         [Fact]

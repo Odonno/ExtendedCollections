@@ -29,11 +29,6 @@ namespace ExtendedCollections
         public bool IsEmpty => _queue.IsEmpty;
 
         /// <summary>
-        /// Values inside the queue.
-        /// </summary>
-        public List<T> Values => _queue.ToList();
-
-        /// <summary>
         /// Event triggered when an element is enqueued.
         /// </summary>
         public event EventHandler Enqueued;
@@ -91,6 +86,15 @@ namespace ExtendedCollections
             }
 
             return new Result<T> { Success = success, Value = item };
+        }
+
+        /// <summary>
+        /// Creates a <see cref="List{T}"/> from the inner <see cref="Queue{T}"/>.
+        /// </summary>
+        /// <returns>A <see cref="List{T}"/> from the inner <see cref="Queue{T}"/>.</returns>
+        public List<T> ToList()
+        {
+            return _queue.ToList();
         }
     }
 }
