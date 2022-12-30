@@ -119,5 +119,13 @@ namespace ExtendedCollections
         {
             return _entities.TryRemove(key, out _);
         }
+
+        /// <summary>
+        /// Removes all elements from the list.
+        /// </summary>
+        public void Clear()
+        {
+            _entities.Clear();
+        }
     }
 }

@@ -195,5 +195,32 @@ namespace ExtendedCollections.Tests
             Assert.Single(entityList);
             Assert.Equal(entity1, entityList[1]);
         }
+
+        [Fact]
+        public void Clear()
+        {
+            // Arrange
+            var entityList = new EntityList<int, Entity>(e => e.Id);
+
+            var entity1 = new Entity
+            {
+                Id = 1,
+                Property = "One"
+            };
+            entityList.Upsert(entity1);
+
+            var entity2 = new Entity
+            {
+                Id = 2,
+                Property = "Two"
+            };
+            entityList.Upsert(entity2);
+
+            // Act
+            entityList.Clear();
+
+            // Assert
+            Assert.Empty(entityList.Values);
+        }
     }
 }
