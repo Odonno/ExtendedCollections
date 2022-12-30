@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace ExtendedCollections
@@ -9,9 +11,37 @@ namespace ExtendedCollections
     /// </summary>
     /// <typeparam name="TKey">The type of the key identifier of each entity.</typeparam>
     /// <typeparam name="TEntity">The type of entity stored.</typeparam>
-    public class EntityList<TKey, TEntity> : List<TEntity>
+    public class EntityList<TKey, TEntity> : IEnumerable<TEntity>
     {
         private readonly Func<TEntity, TKey> _selectKey;
+        private readonly ConcurrentDictionary<TKey, TEntity> _entities;
+
+        public TEntity this[TKey key] 
+        { 
+            get 
+            {
+                return _entities[key];
+            }
+            set 
+            { 
+                _entities[key] = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets a collection containing the keys in the list.
+        /// </summary>
+        public ICollection<TKey> Keys => _entities.Keys;
+
+        /// <summary>
+        /// Gets a collection containing the values in the list.
+        /// </summary>
+        public ICollection<TEntity> Values => _entities.Values;
+
+        /// <summary>
+        /// Gets the number of entities contained in the list.
+        /// </summary>
+        public int Count => _entities.Count;
 
         /// <summary>
         /// Creates a new instance of a <see cref="EntityList{TKey, TEntity}"/>.
@@ -26,6 +56,16 @@ namespace ExtendedCollections
             }
 
             _selectKey = selectKey;
+            _entities = new ConcurrentDictionary<TKey, TEntity>();
+        }
+
+        public IEnumerator<TEntity> GetEnumerator()
+        {
+            return _entities.Values.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         /// <summary>
@@ -35,8 +75,7 @@ namespace ExtendedCollections
         public void Upsert(TEntity entity)
         {
             var key = _selectKey(entity);
-            Remove(key);
-            Add(entity);
+            _entities.AddOrUpdate(key, entity, (_, __) => entity);
         }
         /// <summary>
         /// Insert a collection of entity in the list, or update any entity if it already exists.
@@ -57,7 +96,7 @@ namespace ExtendedCollections
         /// <returns>true if an entity with the given key exists.</returns>
         public bool Exists(TKey key)
         {
-            return Exists(e => _selectKey(e).Equals(key));
+            return _entities.ContainsKey(key);
         }
 
         /// <summary>
@@ -67,7 +106,8 @@ namespace ExtendedCollections
         /// <returns>The entity that matches the key, if found; otherwise, the default value for type <typeparamref name="TEntity"/>.</returns>
         public TEntity Find(TKey key)
         {
-            return Find(e => _selectKey(e).Equals(key));
+            _entities.TryGetValue(key, out var entity);
+            return entity;
         }
 
         /// <summary>
@@ -77,7 +117,7 @@ namespace ExtendedCollections
         /// <returns>true if the entity was removed.</returns>
         public bool Remove(TKey key)
         {
-            return RemoveAll(e => _selectKey(e).Equals(key)) > 0;
+            return _entities.TryRemove(key, out _);
         }
     }
 }
